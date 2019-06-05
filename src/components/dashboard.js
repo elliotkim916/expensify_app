@@ -18,7 +18,6 @@ export class Dashboard extends React.Component {
       title: '',
       description: '',
       amount: '',
-      date: null,
       notes: ''
     }
   }
@@ -42,7 +41,7 @@ export class Dashboard extends React.Component {
       title: this.state.title,
       description: this.state.description,
       amount: this.state.amount,
-      date: Date.now(this.state.date),
+      date: new Date(this.state.date).getTime(),
       notes: this.state.notes
     };
     const index = this.state.index;
@@ -61,28 +60,32 @@ export class Dashboard extends React.Component {
   }
 
   render() {
-    console.log('startdate', Date.now(this.state.startDate));
-    console.log('enddate', Date.now(this.state.endDate));
+    console.log(this.props.startDate);
+    console.log(this.props.endDate);
+
     let expenses = '';
     if (this.props.expenses.length > 0) {
-      expenses = this.props.expenses.map((expense, index) => 
-        <div key={index}>
-          <button type="button" onClick={() => this.props.dispatch(removeExpense(expense.id))}>X</button>
-          <button type="button" onClick={() => {
-            this.setState({isEditing: true});
-            this.setValues(index);
-          }}>
-          Edit Expense
-          </button>
-          <p>{expense.date}</p>
-          <h3>{expense.title}</h3>
-          <p>{expense.description}</p>
-          <p>{expense.amount}</p>
-          <p>{expense.notes}</p>
-        </div>
+      expenses = this.props.expenses
+        .filter(expense => expense.title.toLowerCase().includes(this.props.filter))
+        // .filter(expense => expense.date >= this.props.startDate && expense.date <= this.props.endDate)
+        .map((expense, index) => 
+          <div key={index}>
+            <button type="button" onClick={() => this.props.dispatch(removeExpense(expense.id))}>X</button>
+            <button type="button" onClick={() => {
+              this.setState({isEditing: true});
+              this.setValues(index);
+            }}>
+            Edit Expense
+            </button>
+            <p>{expense.date}</p>
+            <h3>{expense.title}</h3>
+            <p>{expense.description}</p>
+            <p>{expense.amount}</p>
+            <p>{expense.notes}</p>
+          </div>
       );
     }
-  
+
     if (this.state.isEditing) {
       return (
         <div>
@@ -144,13 +147,11 @@ export class Dashboard extends React.Component {
           endDateId="end-date-id"
           onDatesChange={({startDate, endDate}) => {
             this.setState({startDate, endDate});
-            this.props.dispatch(filterExpensesByDates(this.state.startDate, this.state.endDate));
+            this.props.dispatch(filterExpensesByDates(startDate, endDate));
           }}
           focusedInput={this.state.focusedInput}
           onFocusChange={focusedInput => this.setState({focusedInput})}
         />
-        {/* Dates to filter through expenses, start date and end date needed to filter */}
-        {/* Also be able to filter by Title of expense */}
         <h3>All Expenses</h3>
         <input 
           type="text" 
@@ -168,7 +169,9 @@ export class Dashboard extends React.Component {
 
 export const mapStateToProps = state => ({
   expenses: state.expenses,
-  filteredExpenses: state.filteredExpenses
+  filter: state.filter,
+  startDate: state.startDate,
+  endDate: state.endDate
 });
 
 export default connect(mapStateToProps)(Dashboard);
