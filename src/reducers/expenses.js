@@ -1,20 +1,12 @@
 import {
   ADD_EXPENSE,
-  DELETE_EXPENSE,
   UPDATE_EXPENSE,
-  FILTER_EXPENSE,
-  FILTER_BY_DATES,
-  EXPENSE_ERROR
+  FILTER_EXPENSE
 } from '../actions/expenses';
 
 const initialState = {
-  expenses: [],
-  filter: '',
-  startDate: null,
-  endDate: null,
-  loading: false,
-  error: null
-}
+  expenses: []
+};
 
 export function expensesReducer(state=initialState, action) {
   if (action.type === ADD_EXPENSE) {
@@ -28,20 +20,6 @@ export function expensesReducer(state=initialState, action) {
   } else if (action.type === FILTER_EXPENSE) {
     return Object.assign({}, state, {
       filter: action.title.toLowerCase()
-    });
-  } else if (action.type === FILTER_BY_DATES) {
-    console.log(action);
-    return Object.assign({}, state, {
-      startDate: action.startDate,
-      endDate: action.endDate
-    });
-  } else if (action.type === DELETE_EXPENSE) {
-    return Object.assign({}, state, {
-      expenses: state.expenses.filter(expense => expense.id !== action.id)
-    })
-  } else if (action.type === EXPENSE_ERROR) {
-    return Object.assign({}, state, {
-      error: action.error
     });
   }
   return state;
