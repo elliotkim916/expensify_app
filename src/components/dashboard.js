@@ -3,7 +3,8 @@ import {connect} from 'react-redux';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import {DateRangePicker, SingleDatePicker} from 'react-dates';
-import {editExpense, filterExpenses, filterExpensesByDates, removeExpense} from '../actions/expenses';
+import {editExpense, removeExpense} from '../actions/expenses';
+import {filterExpenses, filterExpensesByDates} from '../actions/filter';
 
 export class Dashboard extends React.Component {
   constructor(props) {
@@ -60,14 +61,31 @@ export class Dashboard extends React.Component {
   }
 
   render() {
-    console.log(this.props.startDate);
-    console.log(this.props.endDate);
-
     let expenses = '';
-    if (this.props.expenses.length > 0) {
+    if (this.props.expenses.length > 0 || (this.props.startDate > 0 && this.props.endDate > 0)) {
       expenses = this.props.expenses
         .filter(expense => expense.title.toLowerCase().includes(this.props.filter))
-        // .filter(expense => expense.date >= this.props.startDate && expense.date <= this.props.endDate)
+        .map((expense, index) => 
+          <div key={index}>
+            <button type="button" onClick={() => this.props.dispatch(removeExpense(expense.id))}>X</button>
+            <button type="button" onClick={() => {
+              this.setState({isEditing: true});
+              this.setValues(index);
+            }}>
+            Edit Expense
+            </button>
+            <p>{expense.date}</p>
+            <h3>{expense.title}</h3>
+            <p>{expense.description}</p>
+            <p>{expense.amount}</p>
+            <p>{expense.notes}</p>
+          </div>
+      );
+    }
+
+    if (this.props.startDate > 0 && this.props.endDate > 0) {
+      expenses = this.props.expenses
+        .filter(expense => expense.date >= this.props.startDate && expense.date <= this.props.endDate)
         .map((expense, index) => 
           <div key={index}>
             <button type="button" onClick={() => this.props.dispatch(removeExpense(expense.id))}>X</button>
@@ -168,10 +186,10 @@ export class Dashboard extends React.Component {
 }
 
 export const mapStateToProps = state => ({
-  expenses: state.expenses,
-  filter: state.filter,
-  startDate: state.startDate,
-  endDate: state.endDate
+  expenses: state.expensesReducer.expenses,
+  filter: state.filtersReducer.filter,
+  startDate: state.filtersReducer.startDate,
+  endDate: state.filtersReducer.endDate
 });
 
 export default connect(mapStateToProps)(Dashboard);
