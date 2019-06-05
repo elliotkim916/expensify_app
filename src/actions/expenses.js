@@ -55,5 +55,5 @@ export const filterExpenses = title => dispatch => {
 }
 
 export const filterExpensesByDates = (startDate, endDate) => dispatch => {
-  return dispatch(filterByDates(Date.now(startDate), Date.now(endDate)));
+  return dispatch(filterByDates(new Date(startDate).getTime(), new Date(endDate).getTime()));
 }
