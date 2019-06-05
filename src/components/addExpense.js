@@ -37,7 +37,7 @@ export class AddExpense extends React.Component {
       title: this.state.title,
       description: this.state.description,
       amount: this.state.amount,
-      date: Date.now(this.state.date),
+      date: new Date(this.state.date).getTime(),
       notes: this.state.notes,
       id: uuid.v4()
     };
