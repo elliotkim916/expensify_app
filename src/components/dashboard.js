@@ -47,8 +47,8 @@ export class Dashboard extends React.Component {
           <div key={index}>
             <button type="button" onClick={() => this.props.dispatch(removeExpense(expense.id))}>X</button>
             <button type="button" onClick={() => {
-              this.setState({isEditing: true});
-              this.setValues(index);
+              this.props.history.push('/editExpense');
+              this.props.dispatch(setIndex(index));
             }}>
             Edit Expense
             </button>
