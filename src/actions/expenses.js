@@ -17,6 +17,12 @@ export const updateExpense = (index, editedExpense) => ({
   editedExpense
 });
 
+export const SET_INDEX = 'SET_INDEX';
+export const setIndex = index => ({
+  type: SET_INDEX,
+  index
+});
+
 export const addNewExpense = expense => dispatch => {
   const {title, description, amount, date, notes, id} = expense;
   return dispatch(addExpense(expense));
