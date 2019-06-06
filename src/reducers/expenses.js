@@ -1,11 +1,14 @@
 import {
   ADD_EXPENSE,
   UPDATE_EXPENSE,
-  FILTER_EXPENSE
+  FILTER_EXPENSE,
+  SET_INDEX,
+  DELETE_EXPENSE
 } from '../actions/expenses';
 
 const initialState = {
-  expenses: []
+  expenses: [],
+  index: null
 };
 
 export function expensesReducer(state=initialState, action) {
@@ -20,6 +23,14 @@ export function expensesReducer(state=initialState, action) {
   } else if (action.type === FILTER_EXPENSE) {
     return Object.assign({}, state, {
       filter: action.title.toLowerCase()
+    });
+  } else if (action.type === SET_INDEX) {
+    return Object.assign({}, state, {
+      index: action.index
+    });
+  } else if (action.type === DELETE_EXPENSE) {
+    return Object.assign({}, state, {
+      expenses: state.expenses.filter(expense => expense.id !== action.id)
     });
   }
   return state;
